@@ -1,0 +1,12 @@
+{
+  "itemGroup.alcoholism.group": "Alcoholism",
+  "item.alcoholism.bucket_dileth10": "Bucket of 10% Diluted Ethanol",
+  "block.alcoholism.dileth10": "10% Diluted Ethanol",
+  "item.alcoholism.yeast": "Yeast",
+  "item.alcoholism.wine_bottle": "Wine Bottle",
+  "item.alcoholism.shot_glass": "Shot Glass",
+  "item.alcoholism.fluid_container": "Fluid Container",
+  "block.alcoholism.fluid_container": "Fluid Container",
+  "item.alcoholism.bucket_wine": "Bucket of Wine",
+  "block.alcoholism.wine": "Wine"
+}

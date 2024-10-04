@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "alcoholism",
+  "version": "${version}",
+  "name": "Alcoholism",
+  "description": "A fun mod",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/alcoholism/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.banana1093.alcoholism.client.AlcoholismClient"
+    ],
+    "main": [
+      "com.banana1093.alcoholism.Alcoholism"
+    ],
+    "fabric-datagen": [
+      "com.banana1093.alcoholism.data.DataGenerator"
+    ],
+    "cardinal-components": [
+      "com.banana1093.alcoholism.Alcoholism"
+    ]
+  },
+  "mixins": [
+    "alcoholism.mixins.json",
+    {
+      "config": "alcoholism.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "fabric-api": "*"
+  },
+  "custom": {
+    "cardinal-components": [
+      "alcoholism:bac"
+    ]
+  }
+}
