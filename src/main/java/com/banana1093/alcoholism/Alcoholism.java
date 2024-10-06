@@ -3,12 +3,16 @@ package com.banana1093.alcoholism;
 import com.banana1093.alcoholism.cardinal.SyncedFloatComponent;
 import com.banana1093.alcoholism.fluids.DilEth10;
 import com.banana1093.alcoholism.fluids.Wine;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -17,6 +21,9 @@ import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -85,6 +92,33 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
         Registry.register(Registries.ITEM, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER_ITEM);
 
         Registry.register(Registries.ITEM_GROUP, new Identifier("alcoholism", "group"), ITEM_GROUP);
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("bac")
+                .executes(context -> {
+                    ServerCommandSource s = (ServerCommandSource) context.getSource();
+                    s.sendFeedback(() -> Text.literal("No arguments provided"), false);
+                    return 1;
+                }).then(CommandManager.literal("set")
+                        .then(CommandManager.argument("value", FloatArgumentType.floatArg())
+                                .executes(context -> {
+                                    ServerCommandSource s = (ServerCommandSource) context.getSource();
+                                    ServerPlayerEntity player = s.getPlayer();
+                                    float value = FloatArgumentType.getFloat(context, "value");
+                                    BAC.get(player).setValue(value);
+                                    s.sendFeedback(() -> Text.literal("Set BAC to " + value), false);
+                                    return 1;
+                                })
+                        )
+                ).then(CommandManager.literal("get")
+                        .executes(context -> {
+                            ServerCommandSource s = (ServerCommandSource) context.getSource();
+                            ServerPlayerEntity player = s.getPlayer();
+                            float value = BAC.get(player).getValue();
+                            s.sendFeedback(() -> Text.literal("BAC is " + value), false);
+                            return 1;
+                        })
+                )
+        ));
     }
 
     @Override
