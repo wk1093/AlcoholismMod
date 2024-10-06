@@ -27,6 +27,30 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+/*
+TODOS
+TODO - smooth BAC changes, doesn't instantly go up when drinking:
+    There will be a rtBAC (real-time BAC) and a BAC (displayed BAC) in the player's component, the BAC will slowly change towards the rtBAC, the rtBAC will slowly change towards 0
+    When the player drinks, the rtBAC will increase by a formula based on the amount of alcohol consumed
+    When the player stops drinking, the rtBAC will decrease by a formula based on the time since the player stopped drinking
+    The BAC will be updated every tick to be closer to the rtBAC
+TODO - add effects to different BAC levels:
+    The player will get effects based on their BAC level, these effects will be applied every tick
+    For example, when the player has a good amount (to be determined) their movement will be harder to control (random-based movement manipulation)
+    When the player has a high amount (to be determined) a special shader will be applied to the player's screen (making far things look farther, and close things look closer, as well as some blur)
+    When the player has a very high amount (to be determined) they will get blindness and mining fatigue
+    These will not be exact amounts where the effect just appears, they will all be gradual and based on the player's BAC level.
+    For example the shader will start to take affect at one BAC, but wont get fully applied until a higher BAC
+    This will make it smooth and almost unnoticeable when the effects start to take place
+TODO - add a way to lower BAC:
+    The player will be able to lower their BAC by drinking water, eating food, or waiting
+    Drinking water will lower the rtBAC by a certain amount, eating food will lower the rtBAC by a certain amount, and waiting will lower the rtBAC by a certain amount
+    The player will also be able to see their BAC level in the debug screen
+
+
+ */
+
+
 public class Alcoholism implements ModInitializer, EntityComponentInitializer {
 
     public static final String MODID = "alcoholism";
