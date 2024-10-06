@@ -1,11 +1,9 @@
 package com.banana1093.alcoholism;
 
-import com.banana1093.alcoholism.cardinal.SyncedFloatComponent;
+import com.banana1093.alcoholism.cardinal.BacComponent;
 import com.banana1093.alcoholism.fluids.DilEth10;
 import com.banana1093.alcoholism.fluids.Wine;
-import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.FloatArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
@@ -13,6 +11,7 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -21,6 +20,7 @@ import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -51,7 +51,7 @@ TODO - add a way to lower BAC:
  */
 
 
-public class Alcoholism implements ModInitializer, EntityComponentInitializer {
+public class Alcoholism implements ModInitializer, EntityComponentInitializer, ServerTickEvents.StartTick {
 
     public static final String MODID = "alcoholism";
 
@@ -69,15 +69,15 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
 
     // a wine bottle should contain about 25 oz of fluid, which is about 740 mL
     // a shot glass should contain about 1.5 oz of fluid, which is about 44 mL
-    public static final Item WINE_BOTTLE = new Bottle(new Item.Settings(), 740);
-    public static final Item SHOT_GLASS = new Bottle(new Item.Settings(), 44);
+    public static final Item WINE_BOTTLE = new Bottle(new Item.Settings().maxCount(1).maxDamage(740), 740);
+    public static final Item SHOT_GLASS = new Bottle(new Item.Settings().maxCount(1).maxDamage(44), 44);
 
     public static final Block FLUID_CONTAINER = new FluidContainerBlock(FabricBlockSettings.copy(Blocks.CAULDRON));
     public static final BlockEntityType<FluidContainerEntity> FLUID_CONTAINER_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MODID, "fluid_container"), BlockEntityType.Builder.create(FluidContainerEntity::new, FLUID_CONTAINER).build(null));
     public static final Item FLUID_CONTAINER_ITEM = new BlockItem(FLUID_CONTAINER, new Item.Settings());
 
-    public static final ComponentKey<SyncedFloatComponent> BAC =
-            ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "bac"), SyncedFloatComponent.class);
+    public static final ComponentKey<BacComponent> BAC =
+            ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "bac"), BacComponent.class);
 
     public static final ItemGroup ITEM_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(Items.BUCKET))
@@ -96,6 +96,8 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
 
     @Override
     public void onInitialize() {
+        ServerTickEvents.START_SERVER_TICK.register(this);
+
         Registry.register(Registries.FLUID, new Identifier(MODID, "dileth10"), STILL_DILETH10);
         Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_dileth10"), FLOWING_DILETH10);
         Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_dileth10"), BUCKET_DILETH10);
@@ -117,7 +119,7 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
 
         Registry.register(Registries.ITEM_GROUP, new Identifier("alcoholism", "group"), ITEM_GROUP);
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("bac")
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("rtbac")
                 .executes(context -> {
                     ServerCommandSource s = (ServerCommandSource) context.getSource();
                     s.sendFeedback(() -> Text.literal("No arguments provided"), false);
@@ -128,7 +130,8 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
                                     ServerCommandSource s = (ServerCommandSource) context.getSource();
                                     ServerPlayerEntity player = s.getPlayer();
                                     float value = FloatArgumentType.getFloat(context, "value");
-                                    BAC.get(player).setValue(value);
+                                    assert player != null;
+                                    BAC.get(player).setRtBac(value);
                                     s.sendFeedback(() -> Text.literal("Set BAC to " + value), false);
                                     return 1;
                                 })
@@ -137,7 +140,8 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
                         .executes(context -> {
                             ServerCommandSource s = (ServerCommandSource) context.getSource();
                             ServerPlayerEntity player = s.getPlayer();
-                            float value = BAC.get(player).getValue();
+                            assert player != null;
+                            float value = BAC.get(player).getRtBac();
                             s.sendFeedback(() -> Text.literal("BAC is " + value), false);
                             return 1;
                         })
@@ -147,6 +151,14 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer {
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerForPlayers(BAC, SyncedFloatComponent::new, RespawnCopyStrategy.NEVER_COPY);
+        registry.registerForPlayers(BAC, BacComponent::new, RespawnCopyStrategy.NEVER_COPY);
+    }
+
+
+    @Override
+    public void onStartTick(MinecraftServer minecraftServer) {
+        for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
+            BAC.get(player).serverTick();
+        }
     }
 }

@@ -1,8 +1,11 @@
 package com.banana1093.alcoholism;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,12 +17,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.registry.Registries;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public class FluidContainerBlock extends BlockWithEntity {
     public FluidContainerBlock(Settings settings) {
@@ -93,11 +100,23 @@ public class FluidContainerBlock extends BlockWithEntity {
                         int bottleAmount = 0;
                         String bottleFluid = "";
                         if (stack.hasNbt()) {
+                            if (entity.fluid == null) {
+                                entity.fluid = "";
+                            }
+                            if (entity.fluid.isEmpty() || entity.amount == 0) {
+                                return ActionResult.FAIL;
+                            }
                             assert stack.getNbt() != null;
                             bottleAmount = stack.getNbt().getInt("amount");
                             bottleFluid = stack.getNbt().getString("fluid");
                         }
                         if (bottleAmount == 0) {
+                            if (entity.amount == 0) {
+                                return ActionResult.FAIL;
+                            }
+                            if (entity.fluid.isEmpty()) {
+                                return ActionResult.FAIL;
+                            }
                             bottleFluid = entity.fluid;
                             if (entity.amount >= bottle.MAX_AMOUNT) {
                                 bottleAmount = bottle.MAX_AMOUNT;
@@ -128,5 +147,24 @@ public class FluidContainerBlock extends BlockWithEntity {
         }
 
         return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Override
+    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return VoxelShapes.union(
+                VoxelShapes.cuboid(0.125, 0, 0.125, 0.875, 1, 0.875),
+                VoxelShapes.cuboid(0.09375, 0.75, 0.09375, 0.90625, 0.875, 0.90625),
+                VoxelShapes.cuboid(0.09375, 0.125, 0.09375, 0.90625, 0.25, 0.90625)
+        );
     }
 }

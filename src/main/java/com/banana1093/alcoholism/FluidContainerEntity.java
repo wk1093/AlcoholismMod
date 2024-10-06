@@ -10,6 +10,8 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+
 public class FluidContainerEntity extends BlockEntity {
     public String fluid="";
     public int amount=0;
@@ -31,19 +33,27 @@ public class FluidContainerEntity extends BlockEntity {
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-
         fluid = nbt.getString("fluid");
         amount = nbt.getInt("amount");
     }
 
-//    @Nullable
-//    @Override
-//    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-//        return BlockEntityUpdateS2CPacket.create(this);
-//    }
-//
-//    @Override
-//    public NbtCompound toInitialChunkDataNbt() {
-//        return createNbt();
-//    }
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound nbt = new NbtCompound();
+        this.writeNbt(nbt);
+        return nbt;
+    }
+
+
+    @Override
+    public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this, new Function<BlockEntity, NbtCompound>() {
+            @Override
+            public NbtCompound apply(BlockEntity blockEntity) {
+                NbtCompound nbt = new NbtCompound();
+                ((FluidContainerEntity)blockEntity).writeNbt(nbt);
+                return nbt;
+            }
+        });
+    }
 }

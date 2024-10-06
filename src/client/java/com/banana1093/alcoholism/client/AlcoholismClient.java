@@ -64,8 +64,10 @@ public class AlcoholismClient implements ClientModInitializer {
 //            System.out.println(bac == null);
 //            if (bac == null) return;
 //            System.out.println(bac.getBaseValue()+" "+bac.getValue());
-            double value = Alcoholism.BAC.get(player).getValue();
-            matrixStack.drawText(renderer, "BAC: " + value, 0, 0, 0xffffff, false);
+            double bac = Alcoholism.BAC.get(player).getBac();
+            matrixStack.drawText(renderer, "BAC: " + bac, 0, 0, 0xffffff, false);
+            double rtbac = Alcoholism.BAC.get(player).getRtBac();
+            matrixStack.drawText(renderer, "rtBAC: " + rtbac, 0, 10, 0xffffff, false);
         }));
     }
 }

@@ -61,7 +61,7 @@ public class Bottle extends Item {
         }
 
         if (stack.getNbt().getString("fluid").equals("empty")) {
-            tooltip.add(Text.of("§7Empty"));
+            tooltip.add(Text.of("§7Empty / "+ MAX_AMOUNT + "mB"));
             if (stack.getNbt().getInt("amount") > 0) {
                 stack.getNbt().putInt("amount", 0);
             }
@@ -113,9 +113,9 @@ public class Bottle extends Item {
             }
             float ozConsumed = stack.getNbt().getInt("amount") / 29.5735f;
             float drinkABV = getAlcoholContent(stack.getNbt().getString("fluid"));
-            float bac = Alcoholism.BAC.get(spe).getValue();
+            float bac = Alcoholism.BAC.get(spe).getRtBac();
             bac += ((ozConsumed * drinkABV * 4.05546f) / (146));
-            Alcoholism.BAC.get(spe).setValue(bac);
+            Alcoholism.BAC.get(spe).setRtBac(bac);
         }
 
         if (playerEntity != null) {
@@ -157,5 +157,24 @@ public class Bottle extends Item {
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         return ItemUsage.consumeHeldItem(world, user, hand);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, world, entity, slot, selected);
+        // set damage to the amount
+        if (!stack.hasNbt()) {
+            stack.getOrCreateNbt().putString("fluid", "empty");
+            assert stack.getNbt() != null;
+            stack.getNbt().putInt("amount", 0);
+        }
+        assert stack.getNbt() != null;
+        stack.setDamage(MAX_AMOUNT-stack.getNbt().getInt("amount"));
+    }
+
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        super.usageTick(world, user, stack, remainingUseTicks);
+
     }
 }
