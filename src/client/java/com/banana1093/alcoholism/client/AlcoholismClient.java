@@ -34,24 +34,6 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
 
     @Override
     public void onInitializeClient() {
-//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_DILETH10, Alcoholism.FLOWING_DILETH10, new SimpleFluidRenderHandler(
-//                new Identifier("minecraft:block/water_still"),
-//                new Identifier("minecraft:block/water_flow"),
-//                (Alcoholism.BUCKET_DILETH10).getColor(1)
-//        ));
-//
-//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WINE, Alcoholism.FLOWING_WINE, new SimpleFluidRenderHandler(
-//                new Identifier("minecraft:block/water_still"),
-//                new Identifier("minecraft:block/water_flow"),
-//                (Alcoholism.BUCKET_WINE).getColor(1)
-//        ));
-//
-//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY, new SimpleFluidRenderHandler(
-//                new Identifier("minecraft:block/water_still"),
-//                new Identifier("minecraft:block/water_flow"),
-//                (Alcoholism.BUCKET_WHISKEY).getColor(1)
-//        ));
-
         for (CustomFluids.FluidData fluid : Alcoholism.FLUIDS.getFluids()) {
             FluidRenderHandlerRegistry.INSTANCE.register(fluid.still, fluid.flowing, new SimpleFluidRenderHandler(
                     new Identifier("minecraft:block/water_still"),
