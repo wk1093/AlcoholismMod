@@ -1,6 +1,7 @@
 package com.banana1093.alcoholism;
 
 import com.banana1093.alcoholism.fluids.DilEth10;
+import com.banana1093.alcoholism.fluids.Whiskey;
 import com.banana1093.alcoholism.fluids.Wine;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
@@ -54,7 +55,7 @@ public class Bottle extends Item {
         super.appendTooltip(stack, world, tooltip, context);
 
         // check if the stack has the required tags/NBT data, if not add them with default values
-        if (!stack.hasNbt()) {
+        if (!stack.hasNbt() || stack.getOrCreateNbt().getString("fluid").isEmpty()) {
             stack.getOrCreateNbt().putString("fluid", "empty");
             assert stack.getNbt() != null;
             stack.getNbt().putInt("amount", 0);
@@ -79,14 +80,12 @@ public class Bottle extends Item {
 
     public static int getColorOfFluid(String fluid) {
         // translatable fluid name to color
-        switch (fluid) {
-            case "dileth10":
-                return DilEth10.COLOR;
-            case "wine":
-                return Wine.COLOR;
-            default:
-                return 0xFFFFFF;
-        }
+        return switch (fluid) {
+            case "dileth10" -> DilEth10.COLOR;
+            case "wine" -> Wine.COLOR;
+            case "whiskey" -> Whiskey.COLOR;
+            default -> 0x000000;
+        };
     }
 
     public static float getAlcoholContent(String fluid) {
@@ -96,6 +95,8 @@ public class Bottle extends Item {
                 return DilEth10.ALCOHOL_CONTENT;
             case "wine":
                 return Wine.ALCOHOL_CONTENT;
+            case "whiskey":
+                return Whiskey.ALCOHOL_CONTENT;
             default:
                 return 0;
         }
