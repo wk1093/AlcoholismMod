@@ -12,5 +12,6 @@ run/saves
 run/command_history.txt
 run/options.txt
 run/usercache.json
+run/config/fabric
 src/main/generated/.cache
 .idea/
