@@ -1,7 +1,6 @@
 package com.banana1093.alcoholism;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.serialization.MapCodec;
+import com.banana1093.alcoholism.abstraction.Bottle;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -10,8 +9,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -26,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.registry.Registries;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 public class FluidContainerBlock extends BlockWithEntity {
     public FluidContainerBlock(Settings settings) {

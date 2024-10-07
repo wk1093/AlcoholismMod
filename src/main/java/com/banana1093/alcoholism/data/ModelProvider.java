@@ -1,6 +1,7 @@
 package com.banana1093.alcoholism.data;
 
 import com.banana1093.alcoholism.Alcoholism;
+import com.banana1093.alcoholism.abstraction.CustomBucket;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
@@ -30,9 +31,9 @@ class ModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(Alcoholism.BUCKET_DILETH10, item("template_bucket"));
-        itemModelGenerator.register(Alcoholism.BUCKET_WINE, item("template_bucket"));
-        itemModelGenerator.register(Alcoholism.BUCKET_WHISKEY, item("template_bucket"));
+        for (CustomBucket bucket : Alcoholism.FLUIDS.getBuckets()) {
+            itemModelGenerator.register(bucket, item("template_bucket"));
+        }
         itemModelGenerator.register(Alcoholism.YEAST, mc_item("gunpowder"));
     }
 }

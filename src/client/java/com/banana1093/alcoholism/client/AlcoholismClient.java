@@ -1,8 +1,9 @@
 package com.banana1093.alcoholism.client;
 
 import com.banana1093.alcoholism.Alcoholism;
-import com.banana1093.alcoholism.Bottle;
-import com.banana1093.alcoholism.CustomBucket;
+import com.banana1093.alcoholism.CustomFluids;
+import com.banana1093.alcoholism.abstraction.Bottle;
+import com.banana1093.alcoholism.abstraction.CustomBucket;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import ladysnake.satin.api.managed.ManagedShaderEffect;
 import ladysnake.satin.api.managed.ShaderEffectManager;
@@ -32,32 +33,34 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
 
     @Override
     public void onInitializeClient() {
-        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_DILETH10, Alcoholism.FLOWING_DILETH10, new SimpleFluidRenderHandler(
-                new Identifier("minecraft:block/water_still"),
-                new Identifier("minecraft:block/water_flow"),
-                (Alcoholism.BUCKET_DILETH10).getColor(1)
-        ));
+//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_DILETH10, Alcoholism.FLOWING_DILETH10, new SimpleFluidRenderHandler(
+//                new Identifier("minecraft:block/water_still"),
+//                new Identifier("minecraft:block/water_flow"),
+//                (Alcoholism.BUCKET_DILETH10).getColor(1)
+//        ));
+//
+//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WINE, Alcoholism.FLOWING_WINE, new SimpleFluidRenderHandler(
+//                new Identifier("minecraft:block/water_still"),
+//                new Identifier("minecraft:block/water_flow"),
+//                (Alcoholism.BUCKET_WINE).getColor(1)
+//        ));
+//
+//        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY, new SimpleFluidRenderHandler(
+//                new Identifier("minecraft:block/water_still"),
+//                new Identifier("minecraft:block/water_flow"),
+//                (Alcoholism.BUCKET_WHISKEY).getColor(1)
+//        ));
 
-        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WINE, Alcoholism.FLOWING_WINE, new SimpleFluidRenderHandler(
-                new Identifier("minecraft:block/water_still"),
-                new Identifier("minecraft:block/water_flow"),
-                (Alcoholism.BUCKET_WINE).getColor(1)
-        ));
-
-        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY, new SimpleFluidRenderHandler(
-                new Identifier("minecraft:block/water_still"),
-                new Identifier("minecraft:block/water_flow"),
-                (Alcoholism.BUCKET_WHISKEY).getColor(1)
-        ));
-
-        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_DILETH10, Alcoholism.FLOWING_DILETH10);
-
-        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_WINE, Alcoholism.FLOWING_WINE);
-
-        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY);
-
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> ((CustomBucket)stack.getItem()).getColor(tintIndex),
-                Alcoholism.BUCKET_DILETH10, Alcoholism.BUCKET_WINE, Alcoholism.BUCKET_WHISKEY);
+        for (CustomFluids.FluidData fluid : Alcoholism.FLUIDS.getFluids()) {
+            FluidRenderHandlerRegistry.INSTANCE.register(fluid.still, fluid.flowing, new SimpleFluidRenderHandler(
+                    new Identifier("minecraft:block/water_still"),
+                    new Identifier("minecraft:block/water_flow"),
+                    (fluid.bucket).getColor(1)
+            ));
+            BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), fluid.still, fluid.flowing);
+            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> ((CustomBucket)stack.getItem()).getColor(tintIndex),
+                    fluid.bucket);
+        }
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0xd1b771, Alcoholism.YEAST);
 
