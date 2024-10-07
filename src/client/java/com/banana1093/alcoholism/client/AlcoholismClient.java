@@ -66,7 +66,7 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.WINE_BOTTLE);
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.SHOT_GLASS);
-
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.LIQUOR_BOTTLE);
 
         // display BAC player attribute
         HudRenderCallback.EVENT.register(((matrixStack, tickDelta) -> {

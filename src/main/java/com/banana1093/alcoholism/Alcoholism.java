@@ -56,8 +56,10 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
     // a wine bottle should contain about 25 oz of fluid, which is about 740 mL
     // a shot glass should contain about 1.5 oz of fluid, which is about 44 mL
+    // a liquor bottle should contain about 25.3 oz of fluid, which is about 750 mL
     public static final Item WINE_BOTTLE = new Bottle(new Item.Settings().maxCount(1).maxDamage(740), 740);
     public static final Item SHOT_GLASS = new Bottle(new Item.Settings().maxCount(1).maxDamage(44), 44);
+    public static final Item LIQUOR_BOTTLE = new Bottle(new Item.Settings().maxCount(1).maxDamage(750), 750);
 
     public static final Block FLUID_CONTAINER = new FluidContainerBlock(FabricBlockSettings.copy(Blocks.CAULDRON));
     public static final BlockEntityType<FluidContainerEntity> FLUID_CONTAINER_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MODID, "fluid_container"), BlockEntityType.Builder.create(FluidContainerEntity::new, FLUID_CONTAINER).build(null));
@@ -67,19 +69,6 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
             ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "bac"), BacComponent.class);
 
     public static ItemGroup ITEM_GROUP;
-
-//    public static CustomFluid getFluid(String id) {
-//        switch (id) {
-//            case "dileth10":
-//                return STILL_DILETH10;
-//            case "wine":
-//                return STILL_WINE;
-//            case "whiskey":
-//                return STILL_WHISKEY;
-//            default:
-//                return null;
-//        }
-//    }
 
     public static CustomFluid getFluid(String id) {
         return FLUIDS.getFluid(id);
@@ -96,6 +85,7 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
         Registry.register(Registries.ITEM, new Identifier(MODID, "wine_bottle"), WINE_BOTTLE);
         Registry.register(Registries.ITEM, new Identifier(MODID, "shot_glass"), SHOT_GLASS);
+        Registry.register(Registries.ITEM, new Identifier(MODID, "liquor_bottle"), LIQUOR_BOTTLE);
 
         Registry.register(Registries.BLOCK, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER);
         Registry.register(Registries.ITEM, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER_ITEM);
