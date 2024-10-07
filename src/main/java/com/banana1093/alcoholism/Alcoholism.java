@@ -55,14 +55,13 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
     public static CustomFluids FLUIDS;
 
+    public static Bottles BOTTLES;
+
     public static final Item YEAST = new Item(new Item.Settings());
 
     // a wine bottle should contain about 25 oz of fluid, which is about 740 mL
     // a shot glass should contain about 1.5 oz of fluid, which is about 44 mL
     // a liquor bottle should contain about 25.3 oz of fluid, which is about 750 mL
-    public static final Item WINE_BOTTLE = new Bottle(new Item.Settings().maxCount(1), 740);
-    public static final Item SHOT_GLASS = new Bottle(new Item.Settings().maxCount(1), 44);
-    public static final Item LIQUOR_BOTTLE = new Bottle(new Item.Settings().maxCount(1), 750);
 
     public static final Block FLUID_CONTAINER = new FluidContainerBlock(FabricBlockSettings.copy(Blocks.CAULDRON));
     public static final BlockEntityType<FluidContainerEntity> FLUID_CONTAINER_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MODID, "fluid_container"), BlockEntityType.Builder.create(FluidContainerEntity::new, FLUID_CONTAINER).build(null));
@@ -84,11 +83,11 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
         FLUIDS = new CustomFluids();
 
+        BOTTLES = new Bottles();
+
         Registry.register(Registries.ITEM, new Identifier(MODID, "yeast"), YEAST);
 
-        Registry.register(Registries.ITEM, new Identifier(MODID, "wine_bottle"), WINE_BOTTLE);
-        Registry.register(Registries.ITEM, new Identifier(MODID, "shot_glass"), SHOT_GLASS);
-        Registry.register(Registries.ITEM, new Identifier(MODID, "liquor_bottle"), LIQUOR_BOTTLE);
+
 
         Registry.register(Registries.BLOCK, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER);
         Registry.register(Registries.ITEM, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER_ITEM);
@@ -98,11 +97,12 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
                 .displayName(Text.translatable("itemGroup.alcoholism.group"))
                 .entries((context, entries) -> {
                     entries.add(YEAST);
-                    entries.add(WINE_BOTTLE);
-                    entries.add(SHOT_GLASS);
                     entries.add(FLUID_CONTAINER_ITEM);
                     for (CustomBucket bucket : FLUIDS.getBuckets()) {
                         entries.add(bucket);
+                    }
+                    for (Bottle bottle : BOTTLES.getBottles()) {
+                        entries.add(bottle);
                     }
                 })
                 .build());

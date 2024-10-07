@@ -65,21 +65,16 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0xd1b771, Alcoholism.YEAST);
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.WINE_BOTTLE);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.SHOT_GLASS);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex== 1 ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, Alcoholism.LIQUOR_BOTTLE);
+        for (Bottle bottle : Alcoholism.BOTTLES.getBottles()) {
+            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> (tintIndex == 1 && Alcoholism.getFluid(stack.getOrCreateNbt().getString("fluid")) != null) ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, bottle);
+        }
 
         // display BAC player attribute
         HudRenderCallback.EVENT.register(((matrixStack, tickDelta) -> {
             // text element
             TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
             PlayerEntity player = MinecraftClient.getInstance().player;
-//            renderer.draw("This is red", 0, 100, 0xff0000, false);
             assert player != null;
-//            EntityAttributeInstance bac = player.getAttributeInstance(Alcoholism.BAC);
-//            System.out.println(bac == null);
-//            if (bac == null) return;
-//            System.out.println(bac.getBaseValue()+" "+bac.getValue());
             double bac = Alcoholism.BAC.get(player).getBac();
             matrixStack.drawText(renderer, "BAC: " + bac, 0, 0, 0xffffff, false);
             double rtbac = Alcoholism.BAC.get(player).getRtBac();
