@@ -80,26 +80,20 @@ public class Bottle extends Item {
 
     public static int getColorOfFluid(String fluid) {
         // translatable fluid name to color
-        return switch (fluid) {
-            case "dileth10" -> DilEth10.COLOR;
-            case "wine" -> Wine.COLOR;
-            case "whiskey" -> Whiskey.COLOR;
-            default -> 0x000000;
-        };
+        CustomFluid customFluid = Alcoholism.getFluid(fluid);
+        if (customFluid == null) {
+            return 0;
+        }
+        return customFluid.getColor();
     }
 
     public static float getAlcoholContent(String fluid) {
         // translatable fluid name to alcohol content
-        switch (fluid) {
-            case "dileth10":
-                return DilEth10.ALCOHOL_CONTENT;
-            case "wine":
-                return Wine.ALCOHOL_CONTENT;
-            case "whiskey":
-                return Whiskey.ALCOHOL_CONTENT;
-            default:
-                return 0;
+        CustomFluid customFluid = Alcoholism.getFluid(fluid);
+        if (customFluid == null) {
+            return 0;
         }
+        return customFluid.getAlcoholContent();
     }
 
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {

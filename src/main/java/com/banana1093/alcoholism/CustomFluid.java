@@ -18,6 +18,15 @@ import net.minecraft.util.math.Direction;
 import java.util.Optional;
 
 public abstract class CustomFluid extends FlowableFluid {
+
+    public int getColor() {
+        return 0x000000;
+    }
+
+    public float getAlcoholContent() {
+        return 0.0f;
+    }
+
     /**
      * @return whether the given fluid an instance of this fluid
      */

@@ -50,18 +50,18 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
     public static final String MODID = "alcoholism";
 
-    public static final FlowableFluid STILL_DILETH10 = new DilEth10.Still();
-    public static final FlowableFluid FLOWING_DILETH10 = new DilEth10.Flowing();
+    public static final CustomFluid STILL_DILETH10 = new DilEth10.Still();
+    public static final CustomFluid FLOWING_DILETH10 = new DilEth10.Flowing();
     public static final CustomBucket BUCKET_DILETH10 = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), DilEth10.COLOR, STILL_DILETH10);
     public static final Block DILETH10 = new FluidBlock(STILL_DILETH10, FabricBlockSettings.copy(Blocks.WATER));
 
-    public static final FlowableFluid STILL_WINE = new Wine.Still();
-    public static final FlowableFluid FLOWING_WINE = new Wine.Flowing();
+    public static final CustomFluid STILL_WINE = new Wine.Still();
+    public static final CustomFluid FLOWING_WINE = new Wine.Flowing();
     public static final CustomBucket BUCKET_WINE = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Wine.COLOR, STILL_WINE);
     public static final Block WINE = new FluidBlock(STILL_WINE, FabricBlockSettings.copy(Blocks.WATER));
 
-    public static final FlowableFluid STILL_WHISKEY = new Whiskey.Still();
-    public static final FlowableFluid FLOWING_WHISKEY = new Whiskey.Flowing();
+    public static final CustomFluid STILL_WHISKEY = new Whiskey.Still();
+    public static final CustomFluid FLOWING_WHISKEY = new Whiskey.Flowing();
     public static final CustomBucket BUCKET_WHISKEY = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Whiskey.COLOR, STILL_WHISKEY);
     public static final Block WHISKEY = new FluidBlock(STILL_WHISKEY, FabricBlockSettings.copy(Blocks.WATER));
 
@@ -93,6 +93,19 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
             })
             .build();
+
+    public static CustomFluid getFluid(String id) {
+        switch (id) {
+            case "dileth10":
+                return STILL_DILETH10;
+            case "wine":
+                return STILL_WINE;
+            case "whiskey":
+                return STILL_WHISKEY;
+            default:
+                return null;
+        }
+    }
 
 
     @Override

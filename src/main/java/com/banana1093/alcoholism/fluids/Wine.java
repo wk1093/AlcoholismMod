@@ -15,6 +15,16 @@ public abstract class Wine extends CustomFluid {
     public static final float ALCOHOL_CONTENT = 0.2f;
 
     @Override
+    public int getColor() {
+        return COLOR;
+    }
+
+    @Override
+    public float getAlcoholContent() {
+        return ALCOHOL_CONTENT;
+    }
+
+    @Override
     public Fluid getStill() {
         return Alcoholism.STILL_WINE;
     }

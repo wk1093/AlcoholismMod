@@ -13,6 +13,17 @@ import net.minecraft.world.WorldView;
 public abstract class DilEth10 extends CustomFluid {
     public static final int COLOR = 0xf7e09e;
     public static final float ALCOHOL_CONTENT = 0.1f;
+
+    @Override
+    public int getColor() {
+        return COLOR;
+    }
+
+    @Override
+    public float getAlcoholContent() {
+        return ALCOHOL_CONTENT;
+    }
+
     @Override
     public Fluid getStill() {
         return Alcoholism.STILL_DILETH10;
