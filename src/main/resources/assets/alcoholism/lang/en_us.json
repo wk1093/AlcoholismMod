@@ -10,5 +10,7 @@
   "item.alcoholism.bucket_wine": "Bucket of Wine",
   "block.alcoholism.wine": "Wine",
   "item.alcoholism.bucket_whiskey": "Bucket of Whiskey",
-  "block.alcoholism.whiskey": "Whiskey"
+  "block.alcoholism.whiskey": "Whiskey",
+  "item.alcoholism.bucket_beer": "Bucket of Beer",
+  "block.alcoholism.beer": "Beer"
 }

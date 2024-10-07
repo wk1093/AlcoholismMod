@@ -81,12 +81,13 @@ public class CustomFluids {
     public FluidData DILETH10;
     public FluidData WINE;
     public FluidData WHISKEY;
+    public FluidData BEER;
 
     public CustomFluids() {
         DILETH10 = this.register("dileth10", 0xf7e09e, 0.1f);
         WINE = this.register("wine", 0x9c1138, 0.2f);
         WHISKEY = this.register("whiskey", 0xb37534, 0.48f);
-
+        BEER = this.register("beer", 0xeba134, 0.05f);
     }
 
 
