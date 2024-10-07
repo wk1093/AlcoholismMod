@@ -44,12 +44,20 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
                 (Alcoholism.BUCKET_WINE).getColor(1)
         ));
 
+        FluidRenderHandlerRegistry.INSTANCE.register(Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY, new SimpleFluidRenderHandler(
+                new Identifier("minecraft:block/water_still"),
+                new Identifier("minecraft:block/water_flow"),
+                (Alcoholism.BUCKET_WHISKEY).getColor(1)
+        ));
+
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_DILETH10, Alcoholism.FLOWING_DILETH10);
 
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_WINE, Alcoholism.FLOWING_WINE);
 
+        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Alcoholism.STILL_WHISKEY, Alcoholism.FLOWING_WHISKEY);
+
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> ((CustomBucket)stack.getItem()).getColor(tintIndex),
-                Alcoholism.BUCKET_DILETH10, Alcoholism.BUCKET_WINE);
+                Alcoholism.BUCKET_DILETH10, Alcoholism.BUCKET_WINE, Alcoholism.BUCKET_WHISKEY);
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0xd1b771, Alcoholism.YEAST);
 

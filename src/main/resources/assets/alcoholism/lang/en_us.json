@@ -8,5 +8,7 @@
   "item.alcoholism.fluid_container": "Fluid Container",
   "block.alcoholism.fluid_container": "Fluid Container",
   "item.alcoholism.bucket_wine": "Bucket of Wine",
-  "block.alcoholism.wine": "Wine"
+  "block.alcoholism.wine": "Wine",
+  "item.alcoholism.bucket_whiskey": "Bucket of Whiskey",
+  "block.alcoholism.whiskey": "Whiskey"
 }

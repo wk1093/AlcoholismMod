@@ -2,6 +2,7 @@ package com.banana1093.alcoholism;
 
 import com.banana1093.alcoholism.cardinal.BacComponent;
 import com.banana1093.alcoholism.fluids.DilEth10;
+import com.banana1093.alcoholism.fluids.Whiskey;
 import com.banana1093.alcoholism.fluids.Wine;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
@@ -59,6 +60,11 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
     public static final CustomBucket BUCKET_WINE = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Wine.COLOR, STILL_WINE);
     public static final Block WINE = new FluidBlock(STILL_WINE, FabricBlockSettings.copy(Blocks.WATER));
 
+    public static final FlowableFluid STILL_WHISKEY = new Whiskey.Still();
+    public static final FlowableFluid FLOWING_WHISKEY = new Whiskey.Flowing();
+    public static final CustomBucket BUCKET_WHISKEY = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Whiskey.COLOR, STILL_WHISKEY);
+    public static final Block WHISKEY = new FluidBlock(STILL_WHISKEY, FabricBlockSettings.copy(Blocks.WATER));
+
     public static final Item YEAST = new Item(new Item.Settings());
 
     // a wine bottle should contain about 25 oz of fluid, which is about 740 mL
@@ -83,6 +89,7 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
                 entries.add(FLUID_CONTAINER_ITEM);
                 entries.add(BUCKET_DILETH10);
                 entries.add(BUCKET_WINE);
+                entries.add(BUCKET_WHISKEY);
 
             })
             .build();
@@ -101,6 +108,11 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
         Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_wine"), FLOWING_WINE);
         Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_wine"), BUCKET_WINE);
         Registry.register(Registries.BLOCK, new Identifier(MODID, "wine"), WINE);
+
+        Registry.register(Registries.FLUID, new Identifier(MODID, "whiskey"), STILL_WHISKEY);
+        Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_whiskey"), FLOWING_WHISKEY);
+        Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_whiskey"), BUCKET_WHISKEY);
+        Registry.register(Registries.BLOCK, new Identifier(MODID, "whiskey"), WHISKEY);
 
 
         Registry.register(Registries.ITEM, new Identifier(MODID, "yeast"), YEAST);

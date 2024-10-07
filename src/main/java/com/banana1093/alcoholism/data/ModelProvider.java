@@ -32,6 +32,7 @@ class ModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(Alcoholism.BUCKET_DILETH10, item("template_bucket"));
         itemModelGenerator.register(Alcoholism.BUCKET_WINE, item("template_bucket"));
+        itemModelGenerator.register(Alcoholism.BUCKET_WHISKEY, item("template_bucket"));
         itemModelGenerator.register(Alcoholism.YEAST, mc_item("gunpowder"));
     }
 }
