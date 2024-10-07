@@ -117,9 +117,10 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
         }
         if (bac > 0.1) {
             wobbleEnabled = true;
-            float wobble = (float) (2 * (bac - 0.1) / 0.15);
+            float wobble = (float)((bac - 0.1) / 0.15);
             WOBBLE_SHADER.setUniformValue("Wobble", wobble);
-            WOBBLE_SHADER.setUniformValue("Time", (float) (System.currentTimeMillis() / 1000.0));
+
+            WOBBLE_SHADER.setUniformValue("Time", System.currentTimeMillis() / 1000.0f);
         } else {
             wobbleEnabled = false;
         }

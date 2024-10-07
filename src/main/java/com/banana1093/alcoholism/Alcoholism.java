@@ -49,20 +49,6 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
 
     public static final String MODID = "alcoholism";
 
-//    public static final CustomFluid STILL_DILETH10 = new DilEth10.Still();
-//    public static final CustomFluid FLOWING_DILETH10 = new DilEth10.Flowing();
-//    public static final CustomBucket BUCKET_DILETH10 = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), DilEth10.COLOR, STILL_DILETH10);
-//    public static final Block DILETH10 = new FluidBlock(STILL_DILETH10, FabricBlockSettings.copy(Blocks.WATER));
-//
-//    public static final CustomFluid STILL_WINE = new Wine.Still();
-//    public static final CustomFluid FLOWING_WINE = new Wine.Flowing();
-//    public static final CustomBucket BUCKET_WINE = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Wine.COLOR, STILL_WINE);
-//    public static final Block WINE = new FluidBlock(STILL_WINE, FabricBlockSettings.copy(Blocks.WATER));
-//
-//    public static final CustomFluid STILL_WHISKEY = new Whiskey.Still();
-//    public static final CustomFluid FLOWING_WHISKEY = new Whiskey.Flowing();
-//    public static final CustomBucket BUCKET_WHISKEY = new CustomBucket(new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1), Whiskey.COLOR, STILL_WHISKEY);
-//    public static final Block WHISKEY = new FluidBlock(STILL_WHISKEY, FabricBlockSettings.copy(Blocks.WATER));
 
     public static CustomFluids FLUIDS;
 
@@ -80,20 +66,7 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
     public static final ComponentKey<BacComponent> BAC =
             ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "bac"), BacComponent.class);
 
-    public static final ItemGroup ITEM_GROUP = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(Items.BUCKET))
-            .displayName(Text.translatable("itemGroup.alcoholism.group"))
-            .entries((context, entries) -> {
-                entries.add(YEAST);
-                entries.add(WINE_BOTTLE);
-                entries.add(SHOT_GLASS);
-                entries.add(FLUID_CONTAINER_ITEM);
-//                entries.add(BUCKET_DILETH10);
-//                entries.add(BUCKET_WINE);
-//                entries.add(BUCKET_WHISKEY);
-
-            })
-            .build();
+    public static ItemGroup ITEM_GROUP;
 
 //    public static CustomFluid getFluid(String id) {
 //        switch (id) {
@@ -116,22 +89,8 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
     @Override
     public void onInitialize() {
         ServerTickEvents.START_SERVER_TICK.register(this);
-        FLUIDS = new CustomFluids();
 
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "dileth10"), STILL_DILETH10);
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_dileth10"), FLOWING_DILETH10);
-//        Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_dileth10"), BUCKET_DILETH10);
-//        Registry.register(Registries.BLOCK, new Identifier(MODID, "dileth10"), DILETH10);
-//
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "wine"), STILL_WINE);
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_wine"), FLOWING_WINE);
-//        Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_wine"), BUCKET_WINE);
-//        Registry.register(Registries.BLOCK, new Identifier(MODID, "wine"), WINE);
-//
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "whiskey"), STILL_WHISKEY);
-//        Registry.register(Registries.FLUID, new Identifier(MODID, "flowing_whiskey"), FLOWING_WHISKEY);
-//        Registry.register(Registries.ITEM, new Identifier(MODID, "bucket_whiskey"), BUCKET_WHISKEY);
-//        Registry.register(Registries.BLOCK, new Identifier(MODID, "whiskey"), WHISKEY);
+        FLUIDS = new CustomFluids();
 
         Registry.register(Registries.ITEM, new Identifier(MODID, "yeast"), YEAST);
 
@@ -141,7 +100,19 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
         Registry.register(Registries.BLOCK, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER);
         Registry.register(Registries.ITEM, new Identifier(MODID, "fluid_container"), FLUID_CONTAINER_ITEM);
 
-        Registry.register(Registries.ITEM_GROUP, new Identifier("alcoholism", "group"), ITEM_GROUP);
+        ITEM_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier("alcoholism", "group"), FabricItemGroup.builder()
+                .icon(() -> new ItemStack(Items.BUCKET))
+                .displayName(Text.translatable("itemGroup.alcoholism.group"))
+                .entries((context, entries) -> {
+                    entries.add(YEAST);
+                    entries.add(WINE_BOTTLE);
+                    entries.add(SHOT_GLASS);
+                    entries.add(FLUID_CONTAINER_ITEM);
+                    for (CustomBucket bucket : FLUIDS.getBuckets()) {
+                        entries.add(bucket);
+                    }
+                })
+                .build());
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(CommandManager.literal("rtbac")
                 .executes(context -> {
