@@ -40,7 +40,6 @@ TODO - add a way to lower BAC:
     Drinking water will lower the rtBAC by a certain amount, eating food will lower the rtBAC by a certain amount, and waiting will lower the rtBAC by a certain amount
     The player will also be able to see their BAC level in the debug screen
 TODO - balance effect values
-TODO - fix fluid container being reset on restart/relog
 TODO - custom drink animations
 TODO - fermentation process
 TODO - distillation process
