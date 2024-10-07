@@ -51,6 +51,9 @@ dependencies {
     // Includes Cardinal Components API as a Jar-in-Jar dependency (optional)
     include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_version}"
     include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_version}"
+
+    modImplementation "org.ladysnake:satin:${project.satin_version}"
+    include "org.ladysnake:satin:${project.satin_version}"
 }
 
 processResources {

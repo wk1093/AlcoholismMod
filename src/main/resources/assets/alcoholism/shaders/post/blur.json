@@ -1,0 +1,17 @@
+{
+  "targets": [
+    "swap"
+  ],
+  "passes": [
+    {
+      "name": "alcoholism:blur",
+      "intarget": "minecraft:main",
+      "outtarget": "swap"
+    },
+    {
+      "name": "alcoholism:blur",
+      "intarget": "swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}

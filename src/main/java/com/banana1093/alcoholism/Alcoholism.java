@@ -16,10 +16,16 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -29,24 +35,11 @@ import net.minecraft.util.Identifier;
 
 /*
 TODOS
-TODO - smooth BAC changes, doesn't instantly go up when drinking:
-    There will be a rtBAC (real-time BAC) and a BAC (displayed BAC) in the player's component, the BAC will slowly change towards the rtBAC, the rtBAC will slowly change towards 0
-    When the player drinks, the rtBAC will increase by a formula based on the amount of alcohol consumed
-    When the player stops drinking, the rtBAC will decrease by a formula based on the time since the player stopped drinking
-    The BAC will be updated every tick to be closer to the rtBAC
-TODO - add effects to different BAC levels:
-    The player will get effects based on their BAC level, these effects will be applied every tick
-    For example, when the player has a good amount (to be determined) their movement will be harder to control (random-based movement manipulation)
-    When the player has a high amount (to be determined) a special shader will be applied to the player's screen (making far things look farther, and close things look closer, as well as some blur)
-    When the player has a very high amount (to be determined) they will get blindness and mining fatigue
-    These will not be exact amounts where the effect just appears, they will all be gradual and based on the player's BAC level.
-    For example the shader will start to take affect at one BAC, but wont get fully applied until a higher BAC
-    This will make it smooth and almost unnoticeable when the effects start to take place
 TODO - add a way to lower BAC:
     The player will be able to lower their BAC by drinking water, eating food, or waiting
     Drinking water will lower the rtBAC by a certain amount, eating food will lower the rtBAC by a certain amount, and waiting will lower the rtBAC by a certain amount
     The player will also be able to see their BAC level in the debug screen
-
+TODO - balance effect values
 
  */
 
@@ -154,11 +147,130 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
         registry.registerForPlayers(BAC, BacComponent::new, RespawnCopyStrategy.NEVER_COPY);
     }
 
+    private void effectMan(EntityAttributeInstance effect, float modifierValue, String name) {
+        boolean hasModifier = false;
+        for (EntityAttributeModifier modifier : effect.getModifiers()) {
+            if (modifier.getName().equals(name)) {
+                if (modifier.getValue() != modifierValue) {
+                    effect.removeModifier(modifier);
+                } else {
+                    if (hasModifier) {
+                        effect.removeModifier(modifier);
+                    }
+                    hasModifier = true;
+                }
+            }
+        }
+        if (!hasModifier) {
+            effect.addTemporaryModifier(new EntityAttributeModifier(name, modifierValue, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+        }
+    }
+
 
     @Override
     public void onStartTick(MinecraftServer minecraftServer) {
         for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
             BAC.get(player).serverTick();
+            float bac = BAC.get(player).getBac();
+            // effect are here
+            /*
+0.00%: Sober
+0.01%–0.06%: Typically tipsy or "buzzed"
+0.05%: May feel uninhibited and have impaired judgment
+0.08%: Legally intoxicated
+0.10%–0.12%: May have slurred speech and obvious physical impairment
+0.13%–0.15%: May have blurred vision, loss of balance and coordination, and anxiety or restlessness
+0.16%–0.19%: May be described as "sloppy drunk" and may experience nausea
+0.20%–0.29%: May feel confused, disoriented, and dazed, and may have difficulty walking
+0.30%–0.39%: May experience alcohol poisoning, which can be life-threatening
+0.40% and over: May result in coma or death from respiratory arrest
+*/
+            if (bac >= 0.35) {
+                DamageSource ds = new DamageSource(player.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.GENERIC));
+                // bac 0.35 -> 0.5
+                // bac 0.4 -> 1
+                float damage = 0.5f + (bac - 0.35f) * 1.5f / 0.15f;
+                player.damage(ds, damage);
+            }
+
+            EntityAttributeInstance move_speed = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+            EntityAttributeInstance attack_speed = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+            EntityAttributeInstance attack_damage = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            EntityAttributeInstance armor = player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR);
+            EntityAttributeInstance armor_toughness = player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS);
+            EntityAttributeInstance knockback_resistance = player.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
+
+            assert move_speed != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(move_speed, modifierValue, "alcoholism:drunk_slowness");
+            } else {
+                for (EntityAttributeModifier modifier : move_speed.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_slowness")) {
+                        move_speed.removeModifier(modifier);
+                    }
+                }
+            }
+
+            assert attack_speed != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(attack_speed, modifierValue, "alcoholism:drunk_slowatt");
+            } else {
+                for (EntityAttributeModifier modifier : attack_speed.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_slowatt")) {
+                        attack_speed.removeModifier(modifier);
+                    }
+                }
+            }
+
+            assert attack_damage != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(attack_damage, modifierValue, "alcoholism:drunk_weakatt");
+            } else {
+                for (EntityAttributeModifier modifier : attack_damage.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_weakatt")) {
+                        attack_damage.removeModifier(modifier);
+                    }
+                }
+            }
+
+            assert armor != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(armor, modifierValue, "alcoholism:drunk_weakarmor");
+            } else {
+                for (EntityAttributeModifier modifier : armor.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_weakarmor")) {
+                        armor.removeModifier(modifier);
+                    }
+                }
+            }
+
+            assert armor_toughness != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(armor_toughness, modifierValue, "alcoholism:drunk_weakarmor_toughness");
+            } else {
+                for (EntityAttributeModifier modifier : armor_toughness.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_weakarmor_toughness")) {
+                        armor_toughness.removeModifier(modifier);
+                    }
+                }
+            }
+
+            assert knockback_resistance != null;
+            if (bac >= 0.08) {
+                float modifierValue = -0.05f + (bac - 0.08f) * -0.45f / 0.17f;
+                effectMan(knockback_resistance, modifierValue, "alcoholism:drunk_weakknockback");
+            } else {
+                for (EntityAttributeModifier modifier : knockback_resistance.getModifiers()) {
+                    if (modifier.getName().equals("alcoholism:drunk_weakknockback")) {
+                        knockback_resistance.removeModifier(modifier);
+                    }
+                }
+            }
         }
     }
 }

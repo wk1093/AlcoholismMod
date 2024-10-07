@@ -1,0 +1,17 @@
+{
+  "targets": [
+    "swap"
+  ],
+  "passes": [
+    {
+      "name": "alcoholism:wobble",
+      "intarget": "minecraft:main",
+      "outtarget": "swap"
+    },
+    {
+      "name": "alcoholism:wobble",
+      "intarget": "swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}
