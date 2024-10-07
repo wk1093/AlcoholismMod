@@ -117,7 +117,7 @@ public class Bottle extends Item {
     }
 
     public int getMaxUseTime(ItemStack stack) {
-        return 32;
+        return MAX_AMOUNT / 15 + 15;
     }
 
     public UseAction getUseAction(ItemStack stack) {
@@ -139,19 +139,45 @@ public class Bottle extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(stack, world, entity, slot, selected);
-        // set damage to the amount
         if (!stack.hasNbt()) {
             stack.getOrCreateNbt().putString("fluid", "empty");
             assert stack.getNbt() != null;
             stack.getNbt().putInt("amount", 0);
         }
         assert stack.getNbt() != null;
-        stack.setDamage(MAX_AMOUNT-stack.getNbt().getInt("amount"));
     }
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         super.usageTick(world, user, stack, remainingUseTicks);
-
     }
+
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        if (!stack.hasNbt()) {
+            stack.getOrCreateNbt().putString("fluid", "empty");
+            assert stack.getNbt() != null;
+            stack.getNbt().putInt("amount", 0);
+        }
+        assert stack.getNbt() != null;
+        return stack.getNbt().getInt("amount") * 13 / this.MAX_AMOUNT;
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        if (!stack.hasNbt()) {
+            stack.getOrCreateNbt().putString("fluid", "empty");
+            assert stack.getNbt() != null;
+            stack.getNbt().putInt("amount", 0);
+        }
+        assert stack.getNbt() != null;
+        return getColorOfFluid(stack.getNbt().getString("fluid"));
+    }
+
+
 }

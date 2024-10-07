@@ -41,6 +41,9 @@ TODO - add a way to lower BAC:
     The player will also be able to see their BAC level in the debug screen
 TODO - balance effect values
 TODO - fix fluid container being reset on restart/relog
+TODO - custom drink animations
+TODO - fermentation process
+TODO - distillation process
 
  */
 
@@ -57,9 +60,9 @@ public class Alcoholism implements ModInitializer, EntityComponentInitializer, S
     // a wine bottle should contain about 25 oz of fluid, which is about 740 mL
     // a shot glass should contain about 1.5 oz of fluid, which is about 44 mL
     // a liquor bottle should contain about 25.3 oz of fluid, which is about 750 mL
-    public static final Item WINE_BOTTLE = new Bottle(new Item.Settings().maxCount(1).maxDamage(740), 740);
-    public static final Item SHOT_GLASS = new Bottle(new Item.Settings().maxCount(1).maxDamage(44), 44);
-    public static final Item LIQUOR_BOTTLE = new Bottle(new Item.Settings().maxCount(1).maxDamage(750), 750);
+    public static final Item WINE_BOTTLE = new Bottle(new Item.Settings().maxCount(1), 740);
+    public static final Item SHOT_GLASS = new Bottle(new Item.Settings().maxCount(1), 44);
+    public static final Item LIQUOR_BOTTLE = new Bottle(new Item.Settings().maxCount(1), 750);
 
     public static final Block FLUID_CONTAINER = new FluidContainerBlock(FabricBlockSettings.copy(Blocks.CAULDRON));
     public static final BlockEntityType<FluidContainerEntity> FLUID_CONTAINER_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(MODID, "fluid_container"), BlockEntityType.Builder.create(FluidContainerEntity::new, FLUID_CONTAINER).build(null));
