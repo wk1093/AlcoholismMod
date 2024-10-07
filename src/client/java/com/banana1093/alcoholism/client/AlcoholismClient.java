@@ -20,6 +20,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec2f;
 
 public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.StartTick {
 
@@ -112,6 +113,10 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
             blurEnabled = true;
             float radius = (float) (0.5 + 9.5 * (bac - 0.13) / 0.12);
             BLUR_SHADER.setUniformValue("Radius", radius);
+            // set the blur direction depending on the player looking direction
+            Vec2f direction = new Vec2f((float) Math.sin(player.getYaw() * Math.PI / 180), (float) Math.cos(player.getYaw() * Math.PI / 180));
+            BLUR_SHADER.setUniformValue("BlurDir", direction.x, direction.y);
+
         } else {
             blurEnabled = false;
         }
