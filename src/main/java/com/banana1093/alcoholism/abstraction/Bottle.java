@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
@@ -141,10 +142,43 @@ public class Bottle extends Item {
         super.inventoryTick(stack, world, entity, slot, selected);
         if (!stack.hasNbt()) {
             stack.getOrCreateNbt().putString("fluid", "empty");
-            assert stack.getNbt() != null;
-            stack.getNbt().putInt("amount", 0);
+            stack.getOrCreateNbt().putInt("amount", 0);
         }
-        assert stack.getNbt() != null;
+        NbtCompound nbt = stack.getNbt();
+        assert nbt != null;
+        if (!nbt.contains("amount")) {
+            nbt.putInt("amount", 0);
+        }
+        if (nbt.getInt("amount") > this.MAX_AMOUNT) {
+            nbt.putInt("amount", this.MAX_AMOUNT);
+        }
+        if (nbt.getInt("amount") < 0) {
+            nbt.putInt("amount", 0);
+        }
+        if (!nbt.contains("fluid")) {
+            nbt.putString("fluid", "empty");
+        }
+        if (nbt.getString("fluid").equals("empty") && nbt.getInt("amount") > 0) {
+            nbt.putInt("amount", 0);
+        }
+        if (nbt.getInt("amount") == 0) {
+            nbt.putString("fluid", "empty");
+        }
+        // if we have an invalid fluid, set it to empty 0
+        if (!nbt.getString("fluid").equals("empty")) {
+            if (Alcoholism.getFluid(nbt.getString("fluid")) == null) {
+                nbt.putString("fluid", "empty");
+                nbt.putInt("amount", 0);
+            }
+        }
+
+        // if it is empty set custom_model_data to 1
+        // else 0
+        if (nbt.getString("fluid").equals("empty")) {
+            nbt.putInt("CustomModelData", 1);
+        } else {
+            nbt.putInt("CustomModelData", 0);
+        }
     }
 
     @Override

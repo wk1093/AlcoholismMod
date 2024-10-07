@@ -3,5 +3,13 @@
   "textures": {
     "layer0": "alcoholism:item/wine_bottle",
     "layer1": "alcoholism:item/wine_bottle_overlay"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "alcoholism:item/wine_bottle_empty"
+    }
+  ]
 }

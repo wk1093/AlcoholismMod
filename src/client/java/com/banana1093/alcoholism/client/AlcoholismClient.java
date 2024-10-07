@@ -19,6 +19,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec2f;
 
@@ -49,6 +51,12 @@ public class AlcoholismClient implements ClientModInitializer, ClientTickEvents.
 
         for (Bottle bottle : Alcoholism.BOTTLES.getBottles()) {
             ColorProviderRegistry.ITEM.register((stack, tintIndex) -> (tintIndex == 1 && Alcoholism.getFluid(stack.getOrCreateNbt().getString("fluid")) != null) ? Bottle.getColorOfFluid(stack.getOrCreateNbt().getString("fluid")) : -1, bottle);
+            // if the fluid is null, we want it to be transparent
+            // we have 2 models, one for the empty bottle, and one for the filled bottle
+            // if it is empty, we want to render the empty bottle model
+            // if it is filled, we want to render the filled bottle model
+
+
         }
 
         // display BAC player attribute
