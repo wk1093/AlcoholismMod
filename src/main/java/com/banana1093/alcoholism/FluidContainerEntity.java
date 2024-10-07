@@ -14,10 +14,17 @@ import java.util.function.Function;
 
 public class FluidContainerEntity extends BlockEntity {
     public String fluid="";
-    public int amount=0;
+    private int amount=0;
 
     public static final int MAX_AMOUNT = 2000;
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 
     public FluidContainerEntity(BlockPos pos, BlockState state) {
         super(Alcoholism.FLUID_CONTAINER_ENTITY, pos, state);
@@ -26,6 +33,7 @@ public class FluidContainerEntity extends BlockEntity {
     @Override
     protected void writeNbt(NbtCompound nbt) {
         nbt.putString("fluid", fluid);
+//        nbt.putInt("amount", amount);
         nbt.putInt("amount", amount);
         super.writeNbt(nbt);
     }

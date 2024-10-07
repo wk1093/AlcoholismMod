@@ -42,7 +42,7 @@ public class FluidContainerBlock extends BlockWithEntity {
                 if (!player.getStackInHand(hand).isEmpty()) {
                     ItemStack stack = player.getStackInHand(hand);
                     String translationKey = stack.getTranslationKey();
-                    if (entity.amount == 0) {
+                    if (entity.getAmount() == 0) {
                         entity.fluid = "";
                     }
                     // if translation key starts with "item.alcoholism.bucket_"
@@ -60,9 +60,9 @@ public class FluidContainerBlock extends BlockWithEntity {
                         } else if (!entity.fluid.equals(fluid)) {
                             return ActionResult.FAIL;
                         }
-                        entity.amount += 1000;
-                        if (entity.amount > FluidContainerEntity.MAX_AMOUNT) {
-                            entity.amount = FluidContainerEntity.MAX_AMOUNT;
+                        entity.setAmount(entity.getAmount() + 1000);
+                        if (entity.getAmount() > FluidContainerEntity.MAX_AMOUNT) {
+                            entity.setAmount(FluidContainerEntity.MAX_AMOUNT);
                             return ActionResult.FAIL;
                         }
 
@@ -76,8 +76,8 @@ public class FluidContainerBlock extends BlockWithEntity {
                         return ActionResult.PASS;
                     } else if (stack.isOf(Items.BUCKET)) {
                         // fill empty bucket if we hve enough fluid
-                        if (entity.amount >= 1000) {
-                            entity.amount -= 1000;
+                        if (entity.getAmount() >= 1000) {
+                            entity.setAmount(entity.getAmount() - 1000);
                             String key = "alcoholism:bucket_" + entity.fluid;
                             ItemStack bucket = new ItemStack(Registries.ITEM.get(new Identifier(key)));
                             // if creative, don't give the player anything
@@ -99,7 +99,7 @@ public class FluidContainerBlock extends BlockWithEntity {
                             if (entity.fluid == null) {
                                 entity.fluid = "";
                             }
-                            if (entity.fluid.isEmpty() || entity.amount == 0) {
+                            if (entity.fluid.isEmpty() || entity.getAmount() == 0) {
                                 return ActionResult.FAIL;
                             }
                             assert stack.getNbt() != null;
@@ -107,25 +107,25 @@ public class FluidContainerBlock extends BlockWithEntity {
                             bottleFluid = stack.getNbt().getString("fluid");
                         }
                         if (bottleAmount == 0) {
-                            if (entity.amount == 0) {
+                            if (entity.getAmount() == 0) {
                                 return ActionResult.FAIL;
                             }
                             if (entity.fluid.isEmpty()) {
                                 return ActionResult.FAIL;
                             }
                             bottleFluid = entity.fluid;
-                            if (entity.amount >= bottle.MAX_AMOUNT) {
+                            if (entity.getAmount() >= bottle.MAX_AMOUNT) {
                                 bottleAmount = bottle.MAX_AMOUNT;
-                                entity.amount -= bottle.MAX_AMOUNT;
+                                entity.setAmount(entity.getAmount() - bottle.MAX_AMOUNT);
                             } else {
-                                bottleAmount = entity.amount;
-                                entity.amount = 0;
+                                bottleAmount = entity.getAmount();
+                                entity.setAmount(0);
                             }
                         } else if (bottleFluid.equals(entity.fluid)) {
-                            if (entity.amount >= bottle.MAX_AMOUNT - bottleAmount) {
+                            if (entity.getAmount() >= bottle.MAX_AMOUNT - bottleAmount) {
                                 int remaining = bottle.MAX_AMOUNT - bottleAmount;
                                 bottleAmount = bottle.MAX_AMOUNT;
-                                entity.amount -= remaining;
+                                entity.setAmount(entity.getAmount() - remaining);
                             }
                         } else {
                             return ActionResult.FAIL;
@@ -135,9 +135,10 @@ public class FluidContainerBlock extends BlockWithEntity {
                     }
 
 
-                    if (entity.amount == 0) {
+                    if (entity.getAmount() == 0) {
                         entity.fluid = "";
                     }
+                    entity.markDirty();
                 }
             }
         }
